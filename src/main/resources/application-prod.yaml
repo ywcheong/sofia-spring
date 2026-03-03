@@ -1,0 +1,7 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+# Datasource configured via environment variables:
+# SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME, SPRING_DATASOURCE_PASSWORD
+# NOTE: ddl-auto=validate requires Flyway migrations; prod boot will fail without schema

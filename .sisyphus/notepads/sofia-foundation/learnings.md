@@ -62,3 +62,15 @@
 ### Kotlin/JUnit5 ArchUnit Setup
 - Use `@AnalyzeClasses(packages = ["ywcheong.sofia"], importOptions = [DoNotIncludeTests::class])` to constrain scanning to production classes and avoid Kotlin test artifacts.
 - Import `DoNotIncludeTests` from `com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests` (not from `com.tngtech.archunit.junit`).
+
+## 2026-03-03 Task 5: Application Profiles (base/local/prod)
+
+### Spring Boot 4.x / Hibernate 7 Naming Strategy Keys
+- Use Hibernate naming strategy classes under `org.hibernate.boot.model.naming.*` in config:
+  `CamelCaseToUnderscoresNamingStrategy` and `ImplicitNamingStrategyJpaCompliantImpl`.
+- Legacy Spring Boot 3.x strategy classes under `org.springframework.boot.orm.jpa.hibernate.*` are not used here.
+
+### Profile Split and JPA Defaults
+- Keep global `spring.jpa.open-in-view=false` and `hibernate.jdbc.time_zone=UTC` in base `application.yaml`.
+- Set local datasource in `application-local.yaml` with explicit MySQL UTC URL and `ddl-auto=update`.
+- Keep prod datasource out of `application-prod.yaml` and set `ddl-auto=validate` with guard note about schema migration dependency.
