@@ -15,7 +15,7 @@
 ## 확정된 결정 사항
 - 토폴로지: 챗봇 + 관리자 웹 + 스케줄러/이메일 기능을 하나의 배포물로 포함하는 단일 모놀리식 Spring Boot 앱
 - 카카오 연동: Kakao i Open Builder 스킬 서버(웹훅 → 즉시 JSON 응답)
-- 관리자 웹 UI: 서버 렌더링 MVC (Spring MVC + 템플릿)
+- 관리자 웹 UI: 서버는 REST API Provider + Static HTML Serving (CSR)
 - 템플릿 엔진: 사용하지 않음
 - 관리자 웹 인증: Spring Security + 세션 로그인 (토큰 1회 입력 → 세션 쿠키 유지)
 - DB 스키마 관리:
@@ -40,8 +40,8 @@
 - 카카오 스킬 경로 명명: 도메인/행위 기반 (UC-ID 기반 아님)
 - DB 명명 규칙: 테이블/컬럼 snake_case
 - DB 타임스탬프: UTC로 저장, 표시 시점에 KST 변환
-- 패키지 구성: 기능/도메인 단위로 구성(feature/domain-based slices)
-- 관리자 웹: GET 페이지는 MVC, 변경(mutation)은 `/admin/api/**` 하의 JSON 요청
+- 패키지 구성: `TECHNICAL_ARCHITECTURE.md` 참고
+- 관리자 웹: `/admin/api/**`로 REST API 제공
 - 카카오 스킬: Kakao 타겟 유스케이스 1개당 1 엔드포인트
 - 카카오 스킬 엔드포인트 (고정):
 	- UC-001: `POST /kakao/skill/apply`
