@@ -74,3 +74,25 @@
 - Keep global `spring.jpa.open-in-view=false` and `hibernate.jdbc.time_zone=UTC` in base `application.yaml`.
 - Set local datasource in `application-local.yaml` with explicit MySQL UTC URL and `ddl-auto=update`.
 - Keep prod datasource out of `application-prod.yaml` and set `ddl-auto=validate` with guard note about schema migration dependency.
+
+
+## 2026-03-03 Task 6: Local MySQL 8.4 Docker Compose Infrastructure
+
+### Docker Compose Configuration for MySQL 8.4
+- Use `mysql:8.4` official image with explicit timezone and charset configuration
+- Set `TZ=UTC` environment variable plus `--default-time-zone=+00:00` command flag to enforce UTC throughout
+- Configure utf8mb4 charset and utf8mb4_unicode_ci collation via command flags: `--character-set-server=utf8mb4`, `--collation-server=utf8mb4_unicode_ci`
+- Healthcheck uses `mysqladmin ping -h localhost` with 5s interval, 5s timeout, 10 retries, and 30s start period
+- Named volume `mysql_data` persists database data across container restarts
+- Expose port 3306 for local development (matches Spring Boot `application-local.yaml` datasource config)
+
+### Verification Workflow
+- `docker compose up -d`: Creates network, volume, and starts MySQL container in background
+- `docker compose ps`: Shows container transitions from `health: starting` to `healthy` (~25-30s startup)
+- `docker compose down -v`: Cleanly stops container and removes volume for reset (verified works)
+- Final `docker compose up -d` leaves container running for ongoing development
+
+### Credential Strategy for Local Development
+- Hardcoded credentials (database/username/password all set to `sofia`) in docker-compose.yml
+- No `.env` file needed for local development - simpler setup, acceptable for dev environment
+- These credentials match `application-local.yaml` datasource configuration from Task 5

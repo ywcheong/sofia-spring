@@ -301,7 +301,7 @@ NO — 단계별 사용자 검토 게이트로 인해 순차 진행.
 
   **Commit**: YES | Message: `test(기반): ArchUnit로 헥사고날 규칙과 timestamps 규칙 강제` | Files: [`build.gradle.kts`, `src/test/kotlin/**`]
 
-- [ ] 5. application 설정: base/local/prod 프로파일 + UTC + naming + OIV off
+- [x] 5. application 설정: base/local/prod 프로파일 + UTC + naming + OIV off
 
   **What to do**:
   - 아래 파일을 생성/수정
@@ -357,7 +357,7 @@ NO — 단계별 사용자 검토 게이트로 인해 순차 진행.
 
   **Commit**: YES | Message: `chore(기반): base/local/prod 설정과 UTC/OIV/naming 고정` | Files: [`src/main/resources/application*.yaml`]
 
-- [ ] 6. 로컬 MySQL 8.4 인프라: docker-compose.yml 추가(UTC/utf8mb4/healthcheck)
+- [x] 6. 로컬 MySQL 8.4 인프라: docker-compose.yml 추가(UTC/utf8mb4/healthcheck)
 
   **What to do**:
   - 루트에 `docker-compose.yml` 생성
