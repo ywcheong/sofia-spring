@@ -124,7 +124,7 @@ NO — 단계별 사용자 검토 게이트로 인해 순차 진행.
 > Implementation + Test = ONE task.
 > 각 TODO는 Review Gate Protocol을 반드시 수행.
 
-- [ ] 1. Gradle 품질 게이트(ktlint/detekt) 추가 + check 연결
+- [x] 1. Gradle 품질 게이트(ktlint/detekt) 추가 + check 연결
 
   **What to do**:
   - `build.gradle.kts`에 ktlint/detekt 플러그인 버전 고정 추가
@@ -169,7 +169,7 @@ NO — 단계별 사용자 검토 게이트로 인해 순차 진행.
 
   **Commit**: YES | Message: `chore(기반): ktlint/detekt 품질 게이트 추가` | Files: [`build.gradle.kts`]
 
-- [ ] 2. 테스트 기반: Testcontainers(MySQL) + @ServiceConnection 스캐폴딩
+- [x] 2. 테스트 기반: Testcontainers(MySQL) + @ServiceConnection 스캐폴딩
 
   **What to do**:
   - `build.gradle.kts`에 테스트 의존성 추가(버전 고정: 1.21.4)
@@ -214,7 +214,7 @@ NO — 단계별 사용자 검토 게이트로 인해 순차 진행.
 
   **Commit**: YES | Message: `test(기반): Testcontainers MySQL 통합테스트 베이스 추가` | Files: [`build.gradle.kts`, `src/test/kotlin/**`]
 
-- [ ] 3. Hexagonal 패키지 뼈대 + 공통 Clock/Exception 베이스 추가
+- [x] 3. Hexagonal 패키지 뼈대 + 공통 Clock/Exception 베이스 추가
 
   **What to do**:
   - `docs/TECHNICAL_ARCHITECTURE.md`의 레이아웃을 그대로 패키지로 생성
@@ -258,7 +258,7 @@ NO — 단계별 사용자 검토 게이트로 인해 순차 진행.
 
   **Commit**: YES | Message: `chore(기반): 헥사고날 패키지 뼈대와 ClockConfig 추가` | Files: [`src/main/kotlin/**`]
 
-- [ ] 4. ArchUnit 기반 아키텍처 가드레일 추가(레이어 규칙 + timestamps 규칙)
+- [x] 4. ArchUnit 기반 아키텍처 가드레일 추가(레이어 규칙 + timestamps 규칙)
 
   **What to do**:
   - `build.gradle.kts`에 ArchUnit 의존성 추가: `com.tngtech.archunit:archunit-junit5:1.4.1`

@@ -1,9 +1,10 @@
 {
-  "active_plan": "/home/ywcheong/Desktop/sofia/.sisyphus/plans/sofia-prd-implementation.md",
-  "started_at": "2026-03-03T02:39:33.906Z",
+  "active_plan": "/home/ywcheong/Desktop/sofia/.sisyphus/plans/sofia-foundation.md",
+  "started_at": "2026-03-03T12:33:53.458Z",
   "session_ids": [
-    "ses_34e6f5628ffefnNlV6JO7Hp0D9"
+    "ses_34c4f3701ffe4j45IHgt7b50pa"
   ],
-  "plan_name": "sofia-prd-implementation",
-  "worktree_path": "/home/ywcheong/Desktop/sofia"
+  "plan_name": "sofia-foundation",
+  "worktree_path": "/home/ywcheong/Desktop/sofia-foundation",
+  "agent": "atlas"
 }
