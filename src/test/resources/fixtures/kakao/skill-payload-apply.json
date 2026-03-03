@@ -1,0 +1,16 @@
+{
+  "intent": {
+    "id": "intent-apply",
+    "name": "지원하기"
+  },
+  "userRequest": {
+    "utterance": "지원할게요",
+    "timezone": "Asia/Seoul"
+  },
+  "action": {
+    "name": "apply",
+    "params": {
+      "resumeId": "R-100"
+    }
+  }
+}
