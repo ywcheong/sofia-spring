@@ -400,7 +400,7 @@ NO — 단계별 사용자 검토 게이트로 인해 순차 진행.
 
   **Commit**: YES | Message: `chore(기반): 로컬 MySQL docker-compose 추가(UTC/utf8mb4/healthcheck)` | Files: [`docker-compose.yml`]
 
-- [ ] 7. SystemPhase 실도메인 샘플(E2E): REST + 영속성 + Auditing + Envers + 통합테스트
+- [x] 7. SystemPhase 실도메인 샘플(E2E): REST + 영속성 + Auditing + Envers + 통합테스트
 
   **What to do**:
   - Domain

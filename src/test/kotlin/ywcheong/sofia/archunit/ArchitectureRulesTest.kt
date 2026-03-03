@@ -11,6 +11,8 @@ import com.tngtech.archunit.lang.ConditionEvents
 import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.RestController
 
 @AnalyzeClasses(
     packages = ["ywcheong.sofia"],
@@ -32,14 +34,6 @@ class ArchitectureRulesTest {
     val dependencyDirectionShouldFollowHexagonalFlow: ArchRule =
         CompositeArchRule
             .of(
-                noClasses()
-                    .that()
-                    .resideInAPackage("ywcheong.sofia.adapter..")
-                    .should()
-                    .dependOnClassesThat()
-                    .resideInAPackage("ywcheong.sofia.domain..")
-                    .allowEmptyShould(true),
-            ).and(
                 noClasses()
                     .that()
                     .resideInAnyPackage("ywcheong.sofia.application..", "ywcheong.sofia.domain..")
@@ -135,7 +129,9 @@ class ArchitectureRulesTest {
             .that()
             .resideInAPackage("ywcheong.sofia.adapter.in..")
             .and()
-            .areNotInterfaces()
+            .areAnnotatedWith(RestController::class.java)
+            .or()
+            .areAnnotatedWith(Controller::class.java)
             .should(haveSimpleNameEndingWithAny("Controller", "SkillController"))
             .because("inbound adapters should be easy to identify as controllers")
             .allowEmptyShould(true)

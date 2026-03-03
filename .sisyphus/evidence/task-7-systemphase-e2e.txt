@@ -1,0 +1,8 @@
+$ ./gradlew check
+> Task :detekt UP-TO-DATE
+> Task :ktlintCheck UP-TO-DATE
+> Task :test
+> Task :check
+
+BUILD SUCCESSFUL in 37s
+13 actionable tasks: 1 executed, 12 up-to-date

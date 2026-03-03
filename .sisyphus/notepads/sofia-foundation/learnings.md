@@ -96,3 +96,28 @@
 - Hardcoded credentials (database/username/password all set to `sofia`) in docker-compose.yml
 - No `.env` file needed for local development - simpler setup, acceptable for dev environment
 - These credentials match `application-local.yaml` datasource configuration from Task 5
+
+## 2026-03-03 Task 7: SystemPhase E2E (REST + Persistence + Auditing + Envers)
+
+### Kotlin package naming + ktlint constraint
+- Package paths that include Kotlin keywords (e.g., `application.port.in`, `adapter.in`) must use escaped package declarations (``package ... .`in` ...``) and require file-level suppression `@file:Suppress("ktlint:standard:package-name")` to satisfy ktlint.
+
+### Spring Boot 4 test annotation package move
+- `AutoConfigureMockMvc` is in `org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc` (not the Spring Boot 3.x package).
+
+### Envers + Auditing specifics
+- Envers `@AuditTable` in this stack uses `value = "..."`.
+- JPA auditing timestamps in a mapped superclass require `@EntityListeners(AuditingEntityListener::class)` to populate `createdAt` / `updatedAt`.
+
+### Docker Compose vs Testcontainers Port Conflict
+- When running `docker compose up -d` with MySQL on port 3306, Testcontainers tests may fail due to port/network conflicts.
+- **Workaround**: Stop docker-compose containers before running tests (`docker compose down`), or change docker-compose MySQL to a different port.
+
+### @Transactional Placement Convention
+- Apply `@Transactional` at method level (not class level) for explicit transaction boundary visibility.
+- This makes transaction boundaries obvious to developers and prevents unexpected transaction behavior.
+
+### Test Naming Convention
+- Test function names: English, describes the technical behavior (e.g., `GET system-phase returns default when not exists`)
+- `@DisplayName`: Korean, describes the business meaning (e.g., `"시스템 단계 조회 - 데이터가 없으면 기본값(INACTIVE)을 반환한다"`)
+- This separation helps both technical readability and business understanding.
