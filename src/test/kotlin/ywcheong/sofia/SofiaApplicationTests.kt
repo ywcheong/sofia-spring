@@ -5,9 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class SofiaApplicationTests {
-
     @Test
     fun contextLoads() {
+        // Spring Boot context loads successfully if this test passes
     }
-
 }
