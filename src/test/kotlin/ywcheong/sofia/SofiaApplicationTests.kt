@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class SofiaApplicationTests {
+class SofiaApplicationTests : IntegrationTestSupport() {
     @Test
     fun contextLoads() {
         // Spring Boot context loads successfully if this test passes
