@@ -9,6 +9,7 @@ import jakarta.persistence.Table
 import org.hibernate.envers.AuditTable
 import org.hibernate.envers.Audited
 import ywcheong.sofia.adapter.out.persistence.common.BaseTimeJpaEntity
+import ywcheong.sofia.adapter.out.persistence.common.BypassPrimaryKeyConvention
 import ywcheong.sofia.domain.enums.PhaseType
 import java.time.Instant
 
@@ -16,6 +17,7 @@ import java.time.Instant
 @Table(name = "system_phase")
 @Audited
 @AuditTable(value = "system_phase_aud")
+@BypassPrimaryKeyConvention(reason = "싱글톤 엔티티: 시스템당 단일 레코드만 존재하며 고정된 PK 사용")
 class SystemPhaseJpaEntity(
     @Id
     @Column(name = "id")

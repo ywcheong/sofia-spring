@@ -11,9 +11,12 @@ import com.tngtech.archunit.lang.ConditionEvents
 import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
 import org.springframework.stereotype.Controller
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RestController
+import ywcheong.sofia.adapter.out.persistence.common.BypassPrimaryKeyConvention
 
 @AnalyzeClasses(
     packages = ["ywcheong.sofia"],
@@ -109,6 +112,8 @@ class ArchitectureRulesTest {
                     .resideInAPackage("ywcheong.sofia.adapter.out.persistence..")
                     .and()
                     .areInterfaces()
+                    .and()
+                    .doNotHaveSimpleName("BypassPrimaryKeyConvention")
                     .should()
                     .haveSimpleNameEndingWith("JpaRepository")
                     .because("영속성 어댑터 명명 규칙: Spring Data JPA 인터페이스는 'JpaRepository' 접미사를 사용해야 함")
@@ -119,6 +124,8 @@ class ArchitectureRulesTest {
                     .resideInAPackage("ywcheong.sofia.adapter.out.persistence..")
                     .and()
                     .areNotInterfaces()
+                    .and()
+                    .areAnnotatedWith(jakarta.persistence.Entity::class.java)
                     .should(haveSimpleNameEndingWithAny("JpaEntity", "PersistenceAdapter"))
                     .because("영속성 어댑터 명명 규칙: 구현체는 'JpaEntity'(엔티티) 또는 'PersistenceAdapter'(어댑터) 접미사를 사용해야 함")
                     .allowEmptyShould(true),
@@ -169,6 +176,22 @@ class ArchitectureRulesTest {
             .because("@Transactional 가시성 원칙: 클래스 레벨 선언은 메서드와 거리가 멀어 트랜잭션 적용 여부를 놓치기 쉬우므로 반드시 개별 메서드에만 선언해야 함")
             .allowEmptyShould(true)
 
+    @ArchTest
+    val jpaEntitiesShouldFollowPrimaryKeyConvention: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.out.persistence..")
+            .and()
+            .haveSimpleNameEndingWith("JpaEntity")
+            .and()
+            .doNotHaveModifier(com.tngtech.archunit.core.domain.JavaModifier.ABSTRACT)
+            .and()
+            .areNotAnnotatedWith(BypassPrimaryKeyConvention::class.java)
+            .should(haveIdFieldWithTypeUUID())
+            .andShould(notHaveIdFieldWithGeneratedValue())
+            .because("JPA 기본키 규약: PK는 애플리케이션에서 생성한 UUID여야 하며 DB 자동 생성은 금지됨")
+            .allowEmptyShould(true)
+
     private fun haveSimpleNameEndingWithAny(vararg suffixes: String): ArchCondition<JavaClass> =
         object : ArchCondition<JavaClass>(
             "have simple name ending with one of ${suffixes.joinToString()}",
@@ -217,6 +240,56 @@ class ArchitectureRulesTest {
                         item,
                         implementsUseCase,
                         "${item.name} should implement at least one inbound UseCase interface",
+                    ),
+                )
+            }
+        }
+
+    private fun haveIdFieldWithTypeUUID(): ArchCondition<JavaClass> =
+        object : ArchCondition<JavaClass>("have @Id field with UUID type") {
+            override fun check(
+                item: JavaClass,
+                events: ConditionEvents,
+            ) {
+                val idField = item.allFields.find { it.isAnnotatedWith(Id::class.java) }
+                if (idField == null) {
+                    events.add(
+                        SimpleConditionEvent(
+                            item,
+                            false,
+                            "${item.name} should have a field annotated with @Id",
+                        ),
+                    )
+                    return
+                }
+                val isUUID = idField.rawType.name == "java.util.UUID"
+                events.add(
+                    SimpleConditionEvent(
+                        item,
+                        isUUID,
+                        "${item.name}'s @Id field should be of type java.util.UUID, but was ${idField.rawType.name}",
+                    ),
+                )
+            }
+        }
+
+    private fun notHaveIdFieldWithGeneratedValue(): ArchCondition<JavaClass> =
+        object : ArchCondition<JavaClass>("not have @Id field with @GeneratedValue") {
+            override fun check(
+                item: JavaClass,
+                events: ConditionEvents,
+            ) {
+                val idField = item.allFields.find { it.isAnnotatedWith(Id::class.java) }
+                if (idField == null) {
+                    events.add(SimpleConditionEvent(item, true, "${item.name} has no @Id field to check"))
+                    return
+                }
+                val hasGeneratedValue = idField.isAnnotatedWith(GeneratedValue::class.java)
+                events.add(
+                    SimpleConditionEvent(
+                        item,
+                        !hasGeneratedValue,
+                        "${item.name}'s @Id field '${idField.name}' should not be annotated with @GeneratedValue",
                     ),
                 )
             }

@@ -59,9 +59,13 @@ detekt {
     toolVersion = "2.0.0-alpha.1"
 }
 
-tasks.check {
-    dependsOn(tasks.named("ktlintCheck"))
-    dependsOn(tasks.named("detekt"))
+tasks.named("ktlintCheck") {
+    dependsOn("ktlintFormat")
+}
+
+tasks.named("check") {
+    dependsOn("ktlintCheck")
+    dependsOn("detekt")
 }
 
 tasks.withType<Test> {
