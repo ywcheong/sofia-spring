@@ -12,6 +12,7 @@ import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
 import org.springframework.stereotype.Controller
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RestController
 
 @AnalyzeClasses(
@@ -158,6 +159,16 @@ class ArchitectureRulesTest {
             .because("서비스 계층의 책임: 서비스 구현체는 최소 하나 이상의 유스케이스 인터페이스를 구현하여 비즈니스 계약을 이행해야 함")
             .allowEmptyShould(true)
 
+    @ArchTest
+    val transactionalShouldOnlyBeUsedAtMethodLevel: ArchRule =
+        noClasses()
+            .that()
+            .resideInAPackage("ywcheong.sofia..")
+            .should()
+            .beAnnotatedWith(Transactional::class.java)
+            .because("@Transactional 가시성 원칙: 클래스 레벨 선언은 메서드와 거리가 멀어 트랜잭션 적용 여부를 놓치기 쉬우므로 반드시 개별 메서드에만 선언해야 함")
+            .allowEmptyShould(true)
+
     private fun haveSimpleNameEndingWithAny(vararg suffixes: String): ArchCondition<JavaClass> =
         object : ArchCondition<JavaClass>(
             "have simple name ending with one of ${suffixes.joinToString()}",
@@ -197,7 +208,9 @@ class ArchitectureRulesTest {
                 val implementsUseCase =
                     item.interfaces.any { interfaceType ->
                         interfaceType.name.startsWith("ywcheong.sofia.application.port.in.") &&
-                            interfaceType.name.endsWith("UseCase")
+                            interfaceType.name.endsWith(
+                                "UseCase",
+                            )
                     }
                 events.add(
                     SimpleConditionEvent(
