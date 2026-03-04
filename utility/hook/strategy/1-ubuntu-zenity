@@ -44,6 +44,7 @@ zenity --question \
     --cancel-label="Request Changes" \
     --width=600 \
     --height=400 \
+    --timeout=3600 \
     2>/dev/null
 
 exit_code=$?
