@@ -38,3 +38,6 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### AI Agent ###
+.claude
