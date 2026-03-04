@@ -57,6 +57,7 @@ allOpen {
 
 detekt {
     toolVersion = "2.0.0-alpha.1"
+    config.from(files("config/detekt/detekt.yml"))
 }
 
 tasks.named("ktlintCheck") {

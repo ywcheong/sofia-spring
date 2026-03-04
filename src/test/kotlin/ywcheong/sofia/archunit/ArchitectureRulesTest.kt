@@ -16,7 +16,7 @@ import jakarta.persistence.Id
 import org.springframework.stereotype.Controller
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RestController
-import ywcheong.sofia.adapter.out.persistence.common.BypassPrimaryKeyConvention
+import ywcheong.sofia.adapter.outbound.persistence.common.BypassPrimaryKeyConvention
 
 @AnalyzeClasses(
     packages = ["ywcheong.sofia"],
@@ -59,7 +59,7 @@ class ArchitectureRulesTest {
     val jpaEntitiesShouldHaveTimestamps: ArchRule =
         classes()
             .that()
-            .resideInAPackage("ywcheong.sofia.adapter.out.persistence..")
+            .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
             .and()
             .haveSimpleNameEndingWith("JpaEntity")
             .should(haveFieldNamed("createdAt"))
@@ -74,6 +74,8 @@ class ArchitectureRulesTest {
             .resideInAPackage("ywcheong.sofia.application.service..")
             .and()
             .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
             .should()
             .haveSimpleNameEndingWith("Service")
             .because("애플리케이션 계층의 명명 규칙: 서비스 구현체는 'Service' 접미사를 사용하여 명확히 식별 가능해야 함")
@@ -83,7 +85,7 @@ class ArchitectureRulesTest {
     val inboundPortsShouldBeNamedUseCase: ArchRule =
         classes()
             .that()
-            .resideInAPackage("ywcheong.sofia.application.port.in..")
+            .resideInAPackage("ywcheong.sofia.application.port.inbound..")
             .and()
             .areInterfaces()
             .should()
@@ -95,7 +97,7 @@ class ArchitectureRulesTest {
     val outboundPortsShouldBeNamedPort: ArchRule =
         classes()
             .that()
-            .resideInAPackage("ywcheong.sofia.application.port.out..")
+            .resideInAPackage("ywcheong.sofia.application.port.outbound..")
             .and()
             .areInterfaces()
             .should()
@@ -109,7 +111,7 @@ class ArchitectureRulesTest {
             .of(
                 classes()
                     .that()
-                    .resideInAPackage("ywcheong.sofia.adapter.out.persistence..")
+                    .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
                     .and()
                     .areInterfaces()
                     .and()
@@ -121,7 +123,7 @@ class ArchitectureRulesTest {
             ).and(
                 classes()
                     .that()
-                    .resideInAPackage("ywcheong.sofia.adapter.out.persistence..")
+                    .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
                     .and()
                     .areNotInterfaces()
                     .and()
@@ -135,7 +137,7 @@ class ArchitectureRulesTest {
     val controllersShouldFollowNamingConventions: ArchRule =
         classes()
             .that()
-            .resideInAPackage("ywcheong.sofia.adapter.in..")
+            .resideInAPackage("ywcheong.sofia.adapter.inbound..")
             .and()
             .areAnnotatedWith(RestController::class.java)
             .or()
@@ -162,6 +164,8 @@ class ArchitectureRulesTest {
             .resideInAPackage("ywcheong.sofia.application.service..")
             .and()
             .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
             .should(implementAtLeastOneUseCase())
             .because("서비스 계층의 책임: 서비스 구현체는 최소 하나 이상의 유스케이스 인터페이스를 구현하여 비즈니스 계약을 이행해야 함")
             .allowEmptyShould(true)
@@ -180,7 +184,7 @@ class ArchitectureRulesTest {
     val jpaEntitiesShouldFollowPrimaryKeyConvention: ArchRule =
         classes()
             .that()
-            .resideInAPackage("ywcheong.sofia.adapter.out.persistence..")
+            .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
             .and()
             .haveSimpleNameEndingWith("JpaEntity")
             .and()
@@ -190,6 +194,39 @@ class ArchitectureRulesTest {
             .should(haveIdFieldWithTypeUUID())
             .andShould(notHaveIdFieldWithGeneratedValue())
             .because("JPA 기본키 규약: PK는 애플리케이션에서 생성한 UUID여야 하며 DB 자동 생성은 금지됨")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val shouldNotUseUuidRandomUUIDDirectly: ArchRule =
+        noClasses()
+            .that()
+            .resideInAnyPackage("ywcheong.sofia.domain..", "ywcheong.sofia.application..", "ywcheong.sofia.adapter..")
+            .and()
+            .doNotHaveSimpleName("UuidGenerateService")
+            .should()
+            .callMethod(java.util.UUID::class.java, "randomUUID")
+            .because("UUID 생성 규칙: UUID.randomUUID() 직접 호출 금지, UuidGenerateService를 주입받아 사용해야 함 (테스트 가능성 확보)")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val shouldNotUseInstantNowDirectly: ArchRule =
+        noClasses()
+            .that()
+            .resideInAnyPackage("ywcheong.sofia.domain..", "ywcheong.sofia.application..", "ywcheong.sofia.adapter..")
+            .should()
+            .callMethod(java.time.Instant::class.java, "now")
+            .because("시간 생성 규칙: Instant.now() 직접 호출 금지, Clock을 주입받아 Instant.now(clock)을 사용해야 함 (테스트 가능성 확보)")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val inboundAdaptersShouldNotDependOnOutboundPorts: ArchRule =
+        noClasses()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.inbound..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAPackage("ywcheong.sofia.application.port.outbound..")
+            .because("헥사고날 아키텍처 의존성 규칙: 인바운드 어댑터(Controller)는 아웃바운드 포트(Port)를 직접 의존하지 말고 반드시 유스케이스(UseCase)를 통해야 함")
             .allowEmptyShould(true)
 
     private fun haveSimpleNameEndingWithAny(vararg suffixes: String): ArchCondition<JavaClass> =
@@ -230,7 +267,7 @@ class ArchitectureRulesTest {
             ) {
                 val implementsUseCase =
                     item.interfaces.any { interfaceType ->
-                        interfaceType.name.startsWith("ywcheong.sofia.application.port.in.") &&
+                        interfaceType.name.startsWith("ywcheong.sofia.application.port.inbound.") &&
                             interfaceType.name.endsWith(
                                 "UseCase",
                             )

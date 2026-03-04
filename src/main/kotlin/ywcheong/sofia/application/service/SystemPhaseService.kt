@@ -2,12 +2,12 @@ package ywcheong.sofia.application.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import ywcheong.sofia.application.port.`in`.ChangeSystemPhaseUseCase
-import ywcheong.sofia.application.port.`in`.GetSystemPhaseUseCase
-import ywcheong.sofia.application.port.`in`.command.ChangeSystemPhaseCommand
-import ywcheong.sofia.application.port.`in`.result.SystemPhaseResult
-import ywcheong.sofia.application.port.out.LoadSystemPhasePort
-import ywcheong.sofia.application.port.out.SaveSystemPhasePort
+import ywcheong.sofia.application.port.inbound.ChangeSystemPhaseUseCase
+import ywcheong.sofia.application.port.inbound.GetSystemPhaseUseCase
+import ywcheong.sofia.application.port.inbound.command.ChangeSystemPhaseCommand
+import ywcheong.sofia.application.port.inbound.result.SystemPhaseResult
+import ywcheong.sofia.application.port.outbound.LoadSystemPhasePort
+import ywcheong.sofia.application.port.outbound.SaveSystemPhasePort
 import ywcheong.sofia.domain.entity.SystemPhase
 import ywcheong.sofia.domain.enums.PhaseType
 import java.time.Instant
