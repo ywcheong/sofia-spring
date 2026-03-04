@@ -27,7 +27,7 @@ class ArchitectureRulesTest {
             .should()
             .dependOnClassesThat()
             .resideInAnyPackage("org.springframework..", "jakarta.persistence..", "org.hibernate..")
-            .because("domain should stay framework-agnostic")
+            .because("헥사고날 아키텍처의 핵심 원칙: 도메인은 프레임워크에 독립적이어야 하며 비즈니스 로직만 포함해야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -49,7 +49,7 @@ class ArchitectureRulesTest {
                     .dependOnClassesThat()
                     .resideInAnyPackage("ywcheong.sofia.application..", "ywcheong.sofia.adapter..")
                     .allowEmptyShould(true),
-            ).because("dependencies must flow adapter -> application -> domain without reverse coupling")
+            ).because("헥사고날 아키텍처의 의존성 규칙: 외부(Adapter) → 내부(Application → Domain)로만 의존해야 하며 역방향 의존은 금지됨")
 
     @ArchTest
     val jpaEntitiesShouldHaveTimestamps: ArchRule =
@@ -60,7 +60,7 @@ class ArchitectureRulesTest {
             .haveSimpleNameEndingWith("JpaEntity")
             .should(haveFieldNamed("createdAt"))
             .andShould(haveFieldNamed("updatedAt"))
-            .because("JPA entities must track creation and update timestamps")
+            .because("영속성 어댑터의 표준: JPA 엔티티는 데이터 추적을 위해 생성일시와 수정일시를 반드시 포함해야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -72,7 +72,7 @@ class ArchitectureRulesTest {
             .areNotInterfaces()
             .should()
             .haveSimpleNameEndingWith("Service")
-            .because("application service implementations should be explicitly recognizable")
+            .because("애플리케이션 계층의 명명 규칙: 서비스 구현체는 'Service' 접미사를 사용하여 명확히 식별 가능해야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -84,7 +84,7 @@ class ArchitectureRulesTest {
             .areInterfaces()
             .should()
             .haveSimpleNameEndingWith("UseCase")
-            .because("inbound ports represent use cases and should be named accordingly")
+            .because("헥사고날 아키텍처의 인바운드 포트: 유스케이스 인터페이스는 'UseCase' 접미사를 사용하여 비즈니스 의도를 명확히 표현해야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -96,7 +96,7 @@ class ArchitectureRulesTest {
             .areInterfaces()
             .should()
             .haveSimpleNameEndingWith("Port")
-            .because("outbound ports should expose external dependencies via port interfaces")
+            .because("헥사고날 아키텍처의 아웃바운드 포트: 외부 의존성은 'Port' 접미사를 가진 인터페이스를 통해 추상화되어야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -110,7 +110,7 @@ class ArchitectureRulesTest {
                     .areInterfaces()
                     .should()
                     .haveSimpleNameEndingWith("JpaRepository")
-                    .because("persistence repository interfaces should follow Spring Data naming")
+                    .because("영속성 어댑터 명명 규칙: Spring Data JPA 인터페이스는 'JpaRepository' 접미사를 사용해야 함")
                     .allowEmptyShould(true),
             ).and(
                 classes()
@@ -119,7 +119,7 @@ class ArchitectureRulesTest {
                     .and()
                     .areNotInterfaces()
                     .should(haveSimpleNameEndingWithAny("JpaEntity", "PersistenceAdapter"))
-                    .because("persistence implementation classes should be entity or adapter types")
+                    .because("영속성 어댑터 명명 규칙: 구현체는 'JpaEntity'(엔티티) 또는 'PersistenceAdapter'(어댑터) 접미사를 사용해야 함")
                     .allowEmptyShould(true),
             )
 
@@ -133,7 +133,7 @@ class ArchitectureRulesTest {
             .or()
             .areAnnotatedWith(Controller::class.java)
             .should(haveSimpleNameEndingWithAny("Controller", "SkillController"))
-            .because("inbound adapters should be easy to identify as controllers")
+            .because("인바운드 어댑터 명명 규칙: 컨트롤러는 'Controller' 접미사를 사용하여 진입점을 명확히 식별할 수 있어야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -144,7 +144,7 @@ class ArchitectureRulesTest {
             .should()
             .dependOnClassesThat()
             .resideInAnyPackage("ywcheong.sofia.domain..", "ywcheong.sofia.application..")
-            .because("common should remain a reusable shared layer without business dependencies")
+            .because("공통 계층의 독립성: common 패키지는 비즈니스 로직에 의존하지 않고 재사용 가능한 유틸리티로 유지되어야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -155,7 +155,7 @@ class ArchitectureRulesTest {
             .and()
             .areNotInterfaces()
             .should(implementAtLeastOneUseCase())
-            .because("service implementations should realize inbound use case contracts")
+            .because("서비스 계층의 책임: 서비스 구현체는 최소 하나 이상의 유스케이스 인터페이스를 구현하여 비즈니스 계약을 이행해야 함")
             .allowEmptyShould(true)
 
     private fun haveSimpleNameEndingWithAny(vararg suffixes: String): ArchCondition<JavaClass> =
