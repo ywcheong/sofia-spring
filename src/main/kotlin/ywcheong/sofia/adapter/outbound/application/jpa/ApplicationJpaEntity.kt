@@ -31,9 +31,9 @@ class ApplicationJpaEntity(
     @Column(name = "processed_at")
     val processedAt: Instant? = null,
     @Column(name = "is_resting", nullable = false)
-    val isResting: Boolean = false,
+    var isResting: Boolean = false,
     @Column(name = "is_email_subscribed", nullable = false)
-    val isEmailSubscribed: Boolean = true,
+    var isEmailSubscribed: Boolean = true,
     @Column(name = "total_character_count", nullable = false)
     val totalCharacterCount: Long = 0L,
     @Column(name = "adjusted_character_count", nullable = false)
