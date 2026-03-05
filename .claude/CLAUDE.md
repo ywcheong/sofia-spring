@@ -10,27 +10,26 @@ domain은 외부 의존성 없이 구현 (jpa 등 미사용)
 입력 문제로 4xx 응답이 필요한 경우 `BusinessException`을 상속한 예외 사용.
 기타 모든 예외는 서버 장애인 5xx로 매핑됨.
 
+- feature = dictionary, systemphase, ... 
+- tech = http, kakao, email, scheduler, ...
+  
 - adapter/
-  - inbound/{feature}/
-    - http/, kakao/, email/, scheduler/, ... 
-      - *Controller, dto/*Request,*Response
-	- outbound/{feature}/
-    - jpa/
-      - *JpaEntity, *JpaRepository, *JpaAdapter...
-    - email/, kakao/...
-	    - *Adapter...
   - inbound/common/{tech}/*Config, *Handler, ...
+  - inbound/{feature}/{tech}/(*Controller, dto/*Request,*Response)
   - outbound/common/{tech}/*Config, *Handler, ...
+	- outbound/{feature}/jpa/(*JpaEntity, *JpaRepository, *JpaAdapter...)
+	- outbound/{feature}/{tech}/(*Adapter...)
 - application/
-  - port/inbound/{feature}/
-    - *Usecase, dto/*Command,*Result, exceptions/*Exception
-  - port/outbound/{feature}/
-    - *Port, dto/*Command,*Result, exceptions/*Exception
+  - port/inbound/{feature}/(*Usecase, dto/*Command,*Result, exceptions/*Exception)
+  - port/outbound/{feature}/(*Port, dto/*Command,*Result, exceptions/*Exception)
 	- service/{feature}/*Service
-	- service/common/{tech}/*Config, *Handler, ...
+	- service/common/{tech}/(*Config, *Handler, ...)
 - domain/
-  - common,{feature}/
-    - entity/, value/, enum/, exceptions/
+  - common/
+  - {feature}/entity/... 
+  - {feature}/value/...
+  - {feature}/enum/...
+  - {feature}/exceptions/
 
 ### 지식 저장소
 `.claude/ai-context/{}.md`에 구체적인 지식이 있음.

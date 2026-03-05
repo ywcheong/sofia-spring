@@ -21,5 +21,14 @@
     "adapter": "MockEmailAdapter",
     "ports": ["SendEmailPort"],
     "_memo": "이메일 발송 어댑터. 현재 Mock 구현으로 로그만 출력. 추후 실제 SMTP/SES로 교체 예정."
+  },
+  "task": {
+    "jpaEntity": "TaskJpaEntity",
+    "table": "tasks",
+    "repository": "TaskJpaRepository",
+    "adapter": "TaskJpaAdapter",
+    "ports": ["LoadTaskPort", "SaveTaskPort"],
+    "_pk_type": "UUID (UuidGenerateService 사용)",
+    "_indexes": ["idx_tasks_work_id (unique)", "idx_tasks_assignee_status"]
   }
 }

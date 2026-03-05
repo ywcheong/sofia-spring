@@ -1,6 +1,7 @@
 {
  "_memo": "feature 단위가 key, enums/entity/value가 value",
  "_pk_convention": "PK는 UUID 타입 사용, UuidGenerateService를 통해 애플리케이션에서 생성. 예외 시 @BypassPrimaryKeyConvention 사용",
+ "_pk_convention_2": "엔티티 참조는 기술적 식별자(UUID)를 사용하며, 비즈니스 의미가 있는 값(학번 등)은 도메인 경계를 넘어갈 때만 사용",
  "systemphase": {
   "enums": {
    "SystemPhaseType": {
@@ -26,12 +27,19 @@
   "entity": {
    "Application": {
     "_memo": "참가 신청 엔티티. 번역버디의 봉사활동 참가 신청 정보",
+    "id": "UUID? (null 허용, JPA 저장 후 할당됨)",
     "studentNumber": "학번: StudentNumber (값 객체)",
     "name": "이름: String (2~4글자)",
     "status": "신청 상태: ApplicationStatus (기본값: PENDING)",
     "appliedAt": "신청 일시: Instant",
     "rejectionReason": "거절 사유: String? (null 허용)",
-    "processedAt": "처리 일시: Instant? (null 허용)"
+    "processedAt": "처리 일시: Instant? (null 허용)",
+    "isResting": "휴식 상태: Boolean (기본값: false, 과제 할당 제외)",
+    "isEmailSubscribed": "이메일 수신 설정: Boolean (기본값: true)",
+    "totalCharacterCount": "총 번역 글자 수: Long (기본값: 0)",
+    "adjustedCharacterCount": "보정 자수: Long (기본값: 0)",
+    "warningCount": "경고 횟수: Int (기본값: 0)",
+    "lastAssignedAt": "마지막 과제 할당 시각: Instant? (라운드 로빈용, null 허용)"
    }
   },
   "value": {
@@ -39,6 +47,35 @@
     "_memo": "학번 값 객체. XX-XXX 형식 (두 자리 숫자-세 자리 숫자)",
     "value": "학번 값: String",
     "validate": "형식 검증 메서드 (정규식: ^\\d{2}-\\d{3}$)"
+   }
+  }
+ },
+ "task": {
+  "enums": {
+   "TaskType": {
+    "_memo": "과제 유형",
+    "names": ["GAONNURI", "EXTERNAL"]
+   },
+   "TaskStatus": {
+    "_memo": "과제 상태",
+    "names": ["ASSIGNED", "COMPLETED"]
+   },
+   "AssignmentMethod": {
+    "_memo": "과제 배정 방식",
+    "names": ["AUTO", "MANUAL"]
+   }
+  },
+  "entity": {
+   "Task": {
+    "_memo": "번역 과제 엔티티",
+    "id": "UUID? (null 허용, JPA 저장 후 할당됨)",
+    "taskType": "과제 유형: TaskType",
+    "workId": "작업 ID: String (최대 50자, BR-006: 중복 불가)",
+    "assigneeId": "피할당자 ID: UUID (Application.id 참조, BR-048/049)",
+    "status": "과제 상태: TaskStatus (기본값: ASSIGNED)",
+    "assignedAt": "할당 일시: Instant",
+    "completedAt": "완료 일시: Instant? (null 허용)",
+    "characterCount": "글자 수: Long? (null 허용)"
    }
   }
  }

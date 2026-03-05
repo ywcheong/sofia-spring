@@ -39,5 +39,29 @@
     "useCase": "ProcessApplicationUseCase.rejectApplication",
     "entities": ["Application", "StudentNumber"],
     "_memo": "관리자용: 참가 신청 거절. 거절 사유는 선택적. 거절 시 이메일 발송."
+  },
+  {
+    "endpoint": "POST /admin/api/tasks",
+    "request": "CreateTaskRequest",
+    "response": "CreateTaskResponse",
+    "useCase": "CreateTaskUseCase.createTask",
+    "entities": ["Task", "Application"],
+    "_memo": "관리자용: 번역 과제 생성. 자동/수동 배정 가능. TRANSLATE 페이즈에서만 가능."
+  },
+  {
+    "endpoint": "GET /admin/api/tasks/auto-assignment/preview",
+    "request": null,
+    "response": "PreviewAutoAssignmentResponse",
+    "useCase": "CreateTaskUseCase.previewAutoAssignment",
+    "entities": ["Application"],
+    "_memo": "관리자용: 자동 배정 미리보기. 다음 라운드 로빈 대상 확인."
+  },
+  {
+    "endpoint": "GET /admin/api/tasks/available-assignees",
+    "request": null,
+    "response": "AvailableAssigneesResponse",
+    "useCase": "CreateTaskUseCase.getAvailableAssignees",
+    "entities": ["Application", "Task"],
+    "_memo": "관리자용: 수동 배정 가능한 번역버디 목록 조회."
   }
 ]
