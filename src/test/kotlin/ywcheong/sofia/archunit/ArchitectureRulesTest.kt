@@ -1,6 +1,7 @@
 package ywcheong.sofia.archunit
 
 import com.tngtech.archunit.core.domain.JavaClass
+import com.tngtech.archunit.core.domain.JavaModifier
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
@@ -11,6 +12,7 @@ import com.tngtech.archunit.lang.ConditionEvents
 import com.tngtech.archunit.lang.SimpleConditionEvent
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
+import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import org.springframework.stereotype.Controller
@@ -59,9 +61,7 @@ class ArchitectureRulesTest {
     val jpaEntitiesShouldHaveTimestamps: ArchRule =
         classes()
             .that()
-            .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
-            .and()
-            .haveSimpleNameEndingWith("JpaEntity")
+            .areAnnotatedWith(Entity::class.java)
             .should(haveFieldNamed("createdAt"))
             .andShould(haveFieldNamed("updatedAt"))
             .because("영속성 어댑터의 표준: JPA 엔티티는 데이터 추적을 위해 생성일시와 수정일시를 반드시 포함해야 함")
@@ -88,6 +88,8 @@ class ArchitectureRulesTest {
             .resideInAPackage("ywcheong.sofia.application.port.inbound..")
             .and()
             .areInterfaces()
+            .and()
+            .resideOutsideOfPackage("ywcheong.sofia.application.port.inbound..dto..")
             .should()
             .haveSimpleNameEndingWith("UseCase")
             .because("헥사고날 아키텍처의 인바운드 포트: 유스케이스 인터페이스는 'UseCase' 접미사를 사용하여 비즈니스 의도를 명확히 표현해야 함")
@@ -106,32 +108,33 @@ class ArchitectureRulesTest {
             .allowEmptyShould(true)
 
     @ArchTest
-    val persistenceAdaptersShouldFollowNamingConventions: ArchRule =
-        CompositeArchRule
-            .of(
-                classes()
-                    .that()
-                    .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
-                    .and()
-                    .areInterfaces()
-                    .and()
-                    .doNotHaveSimpleName("BypassPrimaryKeyConvention")
-                    .should()
-                    .haveSimpleNameEndingWith("JpaRepository")
-                    .because("영속성 어댑터 명명 규칙: Spring Data JPA 인터페이스는 'JpaRepository' 접미사를 사용해야 함")
-                    .allowEmptyShould(true),
-            ).and(
-                classes()
-                    .that()
-                    .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
-                    .and()
-                    .areNotInterfaces()
-                    .and()
-                    .areAnnotatedWith(jakarta.persistence.Entity::class.java)
-                    .should(haveSimpleNameEndingWithAny("JpaEntity", "PersistenceAdapter"))
-                    .because("영속성 어댑터 명명 규칙: 구현체는 'JpaEntity'(엔티티) 또는 'PersistenceAdapter'(어댑터) 접미사를 사용해야 함")
-                    .allowEmptyShould(true),
-            )
+    val jpaRepositoriesShouldFollowNamingConventions: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.outbound..")
+            .and()
+            .resideInAPackage("..jpa..")
+            .and()
+            .areInterfaces()
+            .should()
+            .haveSimpleNameEndingWith("JpaRepository")
+            .because("영속성 어댑터 명명 규칙: Spring Data JPA 인터페이스는 'JpaRepository' 접미사를 사용해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val jpaEntitiesAndAdaptersShouldFollowNamingConventions: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.outbound..")
+            .and()
+            .resideInAPackage("..jpa..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .doNotHaveSimpleName("BypassPrimaryKeyConvention")
+            .should(haveSimpleNameEndingWithAny("JpaEntity", "JpaAdapter"))
+            .because("영속성 어댑터 명명 규칙: 구현체는 'JpaEntity'(엔티티) 또는 'JpaAdapter'(어댑터) 접미사를 사용해야 함")
+            .allowEmptyShould(true)
 
     @ArchTest
     val controllersShouldFollowNamingConventions: ArchRule =
@@ -142,19 +145,20 @@ class ArchitectureRulesTest {
             .areAnnotatedWith(RestController::class.java)
             .or()
             .areAnnotatedWith(Controller::class.java)
-            .should(haveSimpleNameEndingWithAny("Controller", "SkillController"))
+            .should()
+            .haveSimpleNameEndingWith("Controller")
             .because("인바운드 어댑터 명명 규칙: 컨트롤러는 'Controller' 접미사를 사용하여 진입점을 명확히 식별할 수 있어야 함")
             .allowEmptyShould(true)
 
     @ArchTest
-    val commonLayerShouldNotDependOnBusinessLayers: ArchRule =
+    val adapterCommonShouldNotDependOnBusinessLayers: ArchRule =
         noClasses()
             .that()
-            .resideInAPackage("ywcheong.sofia.common..")
+            .resideInAPackage("ywcheong.sofia.adapter.common..")
             .should()
             .dependOnClassesThat()
             .resideInAnyPackage("ywcheong.sofia.domain..", "ywcheong.sofia.application..")
-            .because("공통 계층의 독립성: common 패키지는 비즈니스 로직에 의존하지 않고 재사용 가능한 유틸리티로 유지되어야 함")
+            .because("공통 어댑터 계층의 독립성: adapter.common 패키지는 비즈니스 로직에 의존하지 않고 재사용 가능한 기술 유틸리티로 유지되어야 함")
             .allowEmptyShould(true)
 
     @ArchTest
@@ -184,11 +188,13 @@ class ArchitectureRulesTest {
     val jpaEntitiesShouldFollowPrimaryKeyConvention: ArchRule =
         classes()
             .that()
-            .resideInAPackage("ywcheong.sofia.adapter.outbound.persistence..")
+            .resideInAPackage("ywcheong.sofia.adapter.outbound..")
+            .and()
+            .resideInAPackage("..jpa..")
             .and()
             .haveSimpleNameEndingWith("JpaEntity")
             .and()
-            .doNotHaveModifier(com.tngtech.archunit.core.domain.JavaModifier.ABSTRACT)
+            .doNotHaveModifier(JavaModifier.ABSTRACT)
             .and()
             .areNotAnnotatedWith(BypassPrimaryKeyConvention::class.java)
             .should(haveIdFieldWithTypeUUID())
