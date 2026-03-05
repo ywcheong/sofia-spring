@@ -94,7 +94,7 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     }
 
     @Test
-    @DisplayName("참가 신청 - 중복 학번 시 409 Conflict를 반환한다")
+    @DisplayName("참가 신청 - 중복 학번 시 DUPLICATE_STUDENT_NUMBER 에러를 반환한다")
     fun `POST applications rejects duplicate student number`() {
         // given: RECRUIT 페이즈로 설정하고 첫 번째 신청
         mockMvc
@@ -117,7 +117,8 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
                 post("/kakao/api/applications")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"studentNumber":"25-003","name":"박영수"}"""),
-            ).andExpect(status().isConflict)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("DUPLICATE_STUDENT_NUMBER"))
 
         // then: 여전히 1개만 존재
         assertThat(applicationJpaRepository.count()).isEqualTo(1)
@@ -202,7 +203,7 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     }
 
     @Test
-    @DisplayName("참가 신청 - INACTIVE 페이즈에서는 신청 불가하다")
+    @DisplayName("참가 신청 - INACTIVE 페이즈에서는 INVALID_PHASE 에러를 반환한다")
     fun `POST applications rejects in INACTIVE phase`() {
         // given: INACTIVE 페이즈 (기본값)
 
@@ -212,13 +213,14 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
                 post("/kakao/api/applications")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"studentNumber":"25-008","name":"홍길동"}"""),
-            ).andExpect(status().isForbidden)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("INVALID_PHASE"))
 
         assertThat(applicationJpaRepository.count()).isEqualTo(0)
     }
 
     @Test
-    @DisplayName("참가 신청 - SETTLE 페이즈에서는 신청 불가하다")
+    @DisplayName("참가 신청 - SETTLE 페이즈에서는 INVALID_PHASE 에러를 반환한다")
     fun `POST applications rejects in SETTLE phase`() {
         // given: INACTIVE -> RECRUIT -> TRANSLATE -> SETTLE 페이즈로 설정
         mockMvc
@@ -248,7 +250,8 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
                 post("/kakao/api/applications")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"studentNumber":"25-009","name":"홍길동"}"""),
-            ).andExpect(status().isForbidden)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("INVALID_PHASE"))
 
         assertThat(applicationJpaRepository.count()).isEqualTo(0)
     }
@@ -386,7 +389,7 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     }
 
     @Test
-    @DisplayName("신청 승인 - 이미 처리된 신청은 다시 승인할 수 없다")
+    @DisplayName("신청 승인 - 이미 처리된 신청은 ALREADY_PROCESSED 에러를 반환한다")
     fun `POST approve rejects already processed application`() {
         // given: RECRUIT 페이즈로 설정하고 신청 생성 후 승인
         mockMvc
@@ -414,11 +417,12 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
             .perform(
                 post("/admin/api/applications/25-103/approve")
                     .contentType(MediaType.APPLICATION_JSON),
-            ).andExpect(status().isConflict)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("ALREADY_PROCESSED"))
     }
 
     @Test
-    @DisplayName("신청 거절 - 이미 처리된 신청은 다시 거절할 수 없다")
+    @DisplayName("신청 거절 - 이미 처리된 신청은 ALREADY_PROCESSED 에러를 반환한다")
     fun `POST reject rejects already processed application`() {
         // given: RECRUIT 페이즈로 설정하고 신청 생성 후 거절
         mockMvc
@@ -448,12 +452,13 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
                 post("/admin/api/applications/25-104/reject")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"rejectionReason":"다시 시도"}"""),
-            ).andExpect(status().isConflict)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("ALREADY_PROCESSED"))
     }
 
     @Test
-    @DisplayName("신청 승인 - 존재하지 않는 신청은 404 Not Found")
-    fun `POST approve returns 404 for non-existent application`() {
+    @DisplayName("신청 승인 - 존재하지 않는 신청은 APPLICATION_NOT_FOUND 에러를 반환한다")
+    fun `POST approve returns APPLICATION_NOT_FOUND for non-existent application`() {
         // given: RECRUIT 페이즈로 설정
         mockMvc
             .perform(
@@ -467,11 +472,12 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
             .perform(
                 post("/admin/api/applications/99-999/approve")
                     .contentType(MediaType.APPLICATION_JSON),
-            ).andExpect(status().isNotFound)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("APPLICATION_NOT_FOUND"))
     }
 
     @Test
-    @DisplayName("신청 승인 - INACTIVE 페이즈에서는 승인 불가하다")
+    @DisplayName("신청 승인 - INACTIVE 페이즈에서는 INVALID_PHASE 에러를 반환한다")
     fun `POST approve rejects in INACTIVE phase`() {
         // given: RECRUIT 페이즈에서 신청 생성 후 INACTIVE 페이즈로 변경
         mockMvc
@@ -515,7 +521,8 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
             .perform(
                 post("/admin/api/applications/25-105/approve")
                     .contentType(MediaType.APPLICATION_JSON),
-            ).andExpect(status().isForbidden)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("INVALID_PHASE"))
     }
 
     @Test
@@ -601,7 +608,7 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     }
 
     @Test
-    @DisplayName("참가 신청 - 승인된 학번으로는 다시 신청할 수 없다")
+    @DisplayName("참가 신청 - 승인된 학번으로는 DUPLICATE_STUDENT_NUMBER 에러를 반환한다")
     fun `POST applications rejects reapplication after approval`() {
         // given: RECRUIT 페이즈로 설정하고 신청 생성 후 승인
         mockMvc
@@ -630,7 +637,8 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
                 post("/kakao/api/applications")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"studentNumber":"25-201","name":"김철수"}"""),
-            ).andExpect(status().isConflict)
+            ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.title").value("DUPLICATE_STUDENT_NUMBER"))
 
         // then: 여전히 APPROVED 상태 유지
         val entity = applicationJpaRepository.findByStudentNumber("25-201")!!

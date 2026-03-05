@@ -4,4 +4,4 @@ import ywcheong.sofia.domain.exception.SofiaException
 
 class DuplicateStudentNumberException(
     message: String,
-) : SofiaException(message)
+) : SofiaException("DUPLICATE_STUDENT_NUMBER", message)

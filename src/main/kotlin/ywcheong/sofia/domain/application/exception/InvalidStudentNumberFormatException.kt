@@ -4,4 +4,4 @@ import ywcheong.sofia.domain.exception.SofiaException
 
 class InvalidStudentNumberFormatException(
     message: String,
-) : SofiaException(message)
+) : SofiaException("INVALID_STUDENT_NUMBER_FORMAT", message)

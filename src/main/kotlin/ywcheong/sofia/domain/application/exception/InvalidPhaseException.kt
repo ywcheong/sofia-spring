@@ -4,4 +4,4 @@ import ywcheong.sofia.domain.exception.SofiaException
 
 class InvalidPhaseException(
     message: String,
-) : SofiaException(message)
+) : SofiaException("INVALID_PHASE", message)

@@ -4,4 +4,4 @@ import ywcheong.sofia.domain.exception.SofiaException
 
 class ApplicationNotFoundException(
     message: String,
-) : SofiaException(message)
+) : SofiaException("APPLICATION_NOT_FOUND", message)
