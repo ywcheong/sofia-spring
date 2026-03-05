@@ -30,5 +30,15 @@
     "ports": ["LoadTaskPort", "SaveTaskPort"],
     "_pk_type": "UUID (UuidGenerateService 사용)",
     "_indexes": ["idx_tasks_work_id (unique)", "idx_tasks_assignee_status"]
+  },
+  "dictionary": {
+    "jpaEntity": "DictionaryJpaEntity",
+    "table": "dictionary_entries",
+    "repository": "DictionaryJpaRepository",
+    "adapter": "DictionaryJpaAdapter",
+    "ports": ["LoadDictionaryPort"],
+    "_pk_type": "UUID",
+    "_memo": "사전 항목. koreanTermLower, englishTermLower 컬럼으로 인덱스 최적화된 검색 지원",
+    "_indexes": ["idx_dictionary_korean_lower", "idx_dictionary_english_lower"]
   }
 }

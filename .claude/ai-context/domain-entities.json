@@ -78,5 +78,20 @@
     "characterCount": "글자 수: Long? (null 허용)"
    }
   }
+ },
+ "dictionary": {
+  "entity": {
+   "DictionaryEntry": {
+    "_memo": "번역 사전 항목 엔티티",
+    "id": "UUID",
+    "koreanTerm": "한글 용어: String (1~200자)",
+    "englishTerm": "영어 용어: String (1~200자)",
+    "createdAt": "생성 일시: Instant",
+    "updatedAt": "수정 일시: Instant"
+   }
+  },
+  "exceptions": {
+   "InvalidTermLengthException": "용어 길이가 1~200자 범위를 벗어날 때 발생"
+  }
  }
 }
