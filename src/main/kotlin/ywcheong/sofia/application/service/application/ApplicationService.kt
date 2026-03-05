@@ -15,10 +15,10 @@ import ywcheong.sofia.application.port.outbound.email.SendEmailPort
 import ywcheong.sofia.application.port.outbound.systemphase.LoadSystemPhasePort
 import ywcheong.sofia.domain.application.entity.Application
 import ywcheong.sofia.domain.application.enums.ApplicationStatus
-import ywcheong.sofia.domain.application.exception.AlreadyProcessedException
-import ywcheong.sofia.domain.application.exception.ApplicationNotFoundException
-import ywcheong.sofia.domain.application.exception.DuplicateStudentNumberException
-import ywcheong.sofia.domain.application.exception.InvalidPhaseException
+import ywcheong.sofia.domain.application.exceptions.AlreadyProcessedException
+import ywcheong.sofia.domain.application.exceptions.ApplicationNotFoundException
+import ywcheong.sofia.domain.application.exceptions.DuplicateStudentNumberException
+import ywcheong.sofia.domain.application.exceptions.InvalidPhaseException
 import ywcheong.sofia.domain.application.value.StudentNumber
 import ywcheong.sofia.domain.systemphase.enums.SystemPhaseType
 import java.time.Clock

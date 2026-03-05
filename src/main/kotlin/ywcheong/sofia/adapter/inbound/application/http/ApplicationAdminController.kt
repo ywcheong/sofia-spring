@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import ywcheong.sofia.adapter.inbound.application.dto.ProcessApplicationResponse
-import ywcheong.sofia.adapter.inbound.application.dto.RejectApplicationRequest
+import ywcheong.sofia.adapter.inbound.application.http.dto.ProcessApplicationResponse
+import ywcheong.sofia.adapter.inbound.application.http.dto.RejectApplicationRequest
 import ywcheong.sofia.application.port.inbound.application.ProcessApplicationUseCase
 import ywcheong.sofia.application.port.inbound.application.dto.ApproveApplicationCommand
 import ywcheong.sofia.application.port.inbound.application.dto.RejectApplicationCommand

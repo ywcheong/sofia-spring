@@ -1,7 +1,7 @@
 package ywcheong.sofia.domain.application.entity
 
 import ywcheong.sofia.domain.application.enums.ApplicationStatus
-import ywcheong.sofia.domain.application.exception.InvalidNameLengthException
+import ywcheong.sofia.domain.application.exceptions.InvalidNameLengthException
 import ywcheong.sofia.domain.application.value.StudentNumber
 import java.time.Instant
 

@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import ywcheong.sofia.adapter.inbound.application.dto.ApplicationResponse
-import ywcheong.sofia.adapter.inbound.application.dto.ApplyParticipationRequest
+import ywcheong.sofia.adapter.inbound.application.http.dto.ApplicationResponse
+import ywcheong.sofia.adapter.inbound.application.http.dto.ApplyParticipationRequest
 import ywcheong.sofia.application.port.inbound.application.ApplyParticipationUseCase
 import ywcheong.sofia.application.port.inbound.application.dto.ApplyParticipationCommand
 

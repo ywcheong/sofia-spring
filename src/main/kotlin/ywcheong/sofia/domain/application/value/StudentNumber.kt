@@ -1,6 +1,6 @@
 package ywcheong.sofia.domain.application.value
 
-import ywcheong.sofia.domain.application.exception.InvalidStudentNumberFormatException
+import ywcheong.sofia.domain.application.exceptions.InvalidStudentNumberFormatException
 
 data class StudentNumber(
     val value: String,

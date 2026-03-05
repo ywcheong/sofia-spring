@@ -1,4 +1,4 @@
-package ywcheong.sofia.adapter.inbound.application.dto
+package ywcheong.sofia.adapter.inbound.application.http.dto
 
 import ywcheong.sofia.domain.application.enums.ApplicationStatus
 import java.time.Instant

@@ -1,4 +1,4 @@
-package ywcheong.sofia.adapter.outbound.email
+package ywcheong.sofia.adapter.outbound.email.mock
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
