@@ -4,8 +4,10 @@ import ywcheong.sofia.domain.application.enums.ApplicationStatus
 import ywcheong.sofia.domain.application.exceptions.InvalidNameLengthException
 import ywcheong.sofia.domain.application.value.StudentNumber
 import java.time.Instant
+import java.util.UUID
 
 data class Application(
+    val id: UUID? = null,
     val studentNumber: StudentNumber,
     val name: String,
     val status: ApplicationStatus = ApplicationStatus.PENDING,

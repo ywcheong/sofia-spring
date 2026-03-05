@@ -13,4 +13,11 @@ interface SendEmailPort {
         name: String,
         rejectionReason: String?,
     )
+
+    fun sendTaskAssignmentNotification(
+        recipientEmail: String,
+        studentNumber: String,
+        name: String,
+        workId: String,
+    )
 }

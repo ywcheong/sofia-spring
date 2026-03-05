@@ -1,6 +1,5 @@
 package ywcheong.sofia.domain.task.entity
 
-import ywcheong.sofia.domain.application.value.StudentNumber
 import ywcheong.sofia.domain.task.enum.TaskStatus
 import ywcheong.sofia.domain.task.enum.TaskType
 import java.time.Instant
@@ -10,7 +9,7 @@ data class Task(
     val id: UUID? = null,
     val taskType: TaskType,
     val workId: String,
-    val assigneeStudentNumber: StudentNumber,
+    val assigneeId: UUID,
     val status: TaskStatus = TaskStatus.ASSIGNED,
     val assignedAt: Instant,
     val completedAt: Instant? = null,
@@ -57,14 +56,14 @@ data class Task(
         fun create(
             taskType: TaskType,
             workId: String,
-            assigneeStudentNumber: StudentNumber,
+            assigneeId: UUID,
             assignedAt: Instant,
         ): Task =
             Task(
                 id = null,
                 taskType = taskType,
                 workId = workId,
-                assigneeStudentNumber = assigneeStudentNumber,
+                assigneeId = assigneeId,
                 status = TaskStatus.ASSIGNED,
                 assignedAt = assignedAt,
                 completedAt = null,

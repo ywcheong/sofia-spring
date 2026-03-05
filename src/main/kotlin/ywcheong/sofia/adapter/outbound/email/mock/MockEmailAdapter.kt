@@ -26,4 +26,15 @@ class MockEmailAdapter : SendEmailPort {
             "[MOCK EMAIL] 거절 알림 발송: to=$recipientEmail, studentNumber=$studentNumber, name=$name, reason=$rejectionReason",
         )
     }
+
+    override fun sendTaskAssignmentNotification(
+        recipientEmail: String,
+        studentNumber: String,
+        name: String,
+        workId: String,
+    ) {
+        log.info(
+            "[MOCK EMAIL] 과제 배정 알림 발송: to=$recipientEmail, studentNumber=$studentNumber, name=$name, workId=$workId",
+        )
+    }
 }

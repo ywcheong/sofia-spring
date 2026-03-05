@@ -13,4 +13,11 @@ interface ApplicationJpaRepository : JpaRepository<ApplicationJpaEntity, UUID> {
     ): Boolean
 
     fun findByStudentNumber(studentNumber: String): ApplicationJpaEntity?
+
+    fun findByStatus(status: ApplicationStatus): List<ApplicationJpaEntity>
+
+    fun findByStatusAndIsResting(
+        status: ApplicationStatus,
+        isResting: Boolean,
+    ): List<ApplicationJpaEntity>
 }
