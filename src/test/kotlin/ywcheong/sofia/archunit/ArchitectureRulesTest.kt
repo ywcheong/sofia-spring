@@ -16,7 +16,7 @@ import jakarta.persistence.Id
 import org.springframework.stereotype.Controller
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RestController
-import ywcheong.sofia.adapter.outbound.persistence.common.BypassPrimaryKeyConvention
+import ywcheong.sofia.adapter.common.jpa.BypassPrimaryKeyConvention
 
 @AnalyzeClasses(
     packages = ["ywcheong.sofia"],
