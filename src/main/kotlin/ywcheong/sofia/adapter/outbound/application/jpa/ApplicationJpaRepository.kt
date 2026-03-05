@@ -5,4 +5,6 @@ import java.util.UUID
 
 interface ApplicationJpaRepository : JpaRepository<ApplicationJpaEntity, UUID> {
     fun existsByStudentNumber(studentNumber: String): Boolean
+
+    fun findByStudentNumber(studentNumber: String): ApplicationJpaEntity?
 }

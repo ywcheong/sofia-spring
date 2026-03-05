@@ -7,6 +7,8 @@ import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import ywcheong.sofia.domain.application.exception.AlreadyProcessedException
+import ywcheong.sofia.domain.application.exception.ApplicationNotFoundException
 import ywcheong.sofia.domain.application.exception.DuplicateStudentNumberException
 import ywcheong.sofia.domain.application.exception.InvalidPhaseException
 import ywcheong.sofia.domain.exception.SofiaException
@@ -42,6 +44,8 @@ class GlobalExceptionHandler(
     private fun determineHttpStatus(exception: SofiaException): HttpStatus =
         when (exception) {
             is DuplicateStudentNumberException -> HttpStatus.CONFLICT
+            is AlreadyProcessedException -> HttpStatus.CONFLICT
+            is ApplicationNotFoundException -> HttpStatus.NOT_FOUND
             is InvalidPhaseException -> HttpStatus.FORBIDDEN
             else -> HttpStatus.BAD_REQUEST
         }

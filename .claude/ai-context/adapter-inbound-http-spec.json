@@ -23,5 +23,21 @@
     "useCase": "ApplyParticipationUseCase",
     "entities": ["Application", "StudentNumber"],
     "_memo": "번역버디 참가 신청. RECRUIT 또는 TRANSLATE 페이즈에서만 가능"
+  },
+  {
+    "endpoint": "POST /admin/api/applications/{studentNumber}/approve",
+    "request": null,
+    "response": "ProcessApplicationResponse",
+    "useCase": "ProcessApplicationUseCase.approveApplication",
+    "entities": ["Application", "StudentNumber"],
+    "_memo": "관리자용: 참가 신청 승인. RECRUIT 또는 TRANSLATE 페이즈에서만 가능. 승인 시 이메일 발송."
+  },
+  {
+    "endpoint": "POST /admin/api/applications/{studentNumber}/reject",
+    "request": "RejectApplicationRequest",
+    "response": "ProcessApplicationResponse",
+    "useCase": "ProcessApplicationUseCase.rejectApplication",
+    "entities": ["Application", "StudentNumber"],
+    "_memo": "관리자용: 참가 신청 거절. 거절 사유는 선택적. 거절 시 이메일 발송."
   }
 ]

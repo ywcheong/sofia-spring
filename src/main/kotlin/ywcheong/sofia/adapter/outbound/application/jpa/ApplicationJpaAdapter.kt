@@ -16,17 +16,36 @@ class ApplicationJpaAdapter(
     override fun existsByStudentNumber(studentNumber: StudentNumber): Boolean =
         applicationJpaRepository.existsByStudentNumber(studentNumber.value)
 
+    override fun findByStudentNumber(studentNumber: StudentNumber): Application? =
+        applicationJpaRepository.findByStudentNumber(studentNumber.value)?.toDomain()
+
     override fun save(application: Application): Application {
+        val existingEntity = applicationJpaRepository.findByStudentNumber(application.studentNumber.value)
+
         val jpaEntity =
-            ApplicationJpaEntity(
-                id = uuidGenerateService.generate(),
-                studentNumber = application.studentNumber.value,
-                name = application.name,
-                status = application.status,
-                appliedAt = application.appliedAt,
-                rejectionReason = application.rejectionReason,
-                processedAt = application.processedAt,
-            )
+            if (existingEntity != null) {
+                // Update existing
+                ApplicationJpaEntity(
+                    id = existingEntity.id,
+                    studentNumber = application.studentNumber.value,
+                    name = application.name,
+                    status = application.status,
+                    appliedAt = application.appliedAt,
+                    rejectionReason = application.rejectionReason,
+                    processedAt = application.processedAt,
+                )
+            } else {
+                // Create new
+                ApplicationJpaEntity(
+                    id = uuidGenerateService.generate(),
+                    studentNumber = application.studentNumber.value,
+                    name = application.name,
+                    status = application.status,
+                    appliedAt = application.appliedAt,
+                    rejectionReason = application.rejectionReason,
+                    processedAt = application.processedAt,
+                )
+            }
         applicationJpaRepository.save(jpaEntity)
         return application
     }

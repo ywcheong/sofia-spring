@@ -25,6 +25,26 @@ data class Application(
         }
     }
 
+    fun approve(processedAt: Instant): Application {
+        require(status == ApplicationStatus.PENDING) { "이미 처리된 신청입니다" }
+        return copy(
+            status = ApplicationStatus.APPROVED,
+            processedAt = processedAt,
+        )
+    }
+
+    fun reject(
+        rejectionReason: String?,
+        processedAt: Instant,
+    ): Application {
+        require(status == ApplicationStatus.PENDING) { "이미 처리된 신청입니다" }
+        return copy(
+            status = ApplicationStatus.REJECTED,
+            rejectionReason = rejectionReason,
+            processedAt = processedAt,
+        )
+    }
+
     companion object {
         private const val MIN_NAME_LENGTH = 2
         private const val MAX_NAME_LENGTH = 4

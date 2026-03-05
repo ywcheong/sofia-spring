@@ -16,5 +16,10 @@
     "adapter": "ApplicationJpaAdapter",
     "ports": ["LoadApplicationPort", "SaveApplicationPort"],
     "_pk_type": "UUID (UuidGenerateService 사용)"
+  },
+  "email": {
+    "adapter": "MockEmailAdapter",
+    "ports": ["SendEmailPort"],
+    "_memo": "이메일 발송 어댑터. 현재 Mock 구현으로 로그만 출력. 추후 실제 SMTP/SES로 교체 예정."
   }
 }
