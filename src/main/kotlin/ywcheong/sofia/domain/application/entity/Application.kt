@@ -12,6 +12,12 @@ data class Application(
     val appliedAt: Instant,
     val rejectionReason: String? = null,
     val processedAt: Instant? = null,
+    val isResting: Boolean = false,
+    val isEmailSubscribed: Boolean = true,
+    val totalCharacterCount: Long = 0L,
+    val adjustedCharacterCount: Long = 0L,
+    val warningCount: Int = 0,
+    val lastAssignedAt: Instant? = null,
 ) {
     init {
         validate()
@@ -44,6 +50,25 @@ data class Application(
             processedAt = processedAt,
         )
     }
+
+    fun setResting(isResting: Boolean): Application = copy(isResting = isResting)
+
+    fun setEmailSubscription(isEmailSubscribed: Boolean): Application = copy(isEmailSubscribed = isEmailSubscribed)
+
+    fun addCharacterCount(
+        characterCount: Long,
+        adjustedCount: Long,
+    ): Application =
+        copy(
+            totalCharacterCount = totalCharacterCount + characterCount,
+            adjustedCharacterCount = adjustedCharacterCount + adjustedCount,
+        )
+
+    fun incrementWarning(): Application = copy(warningCount = warningCount + 1)
+
+    fun decrementWarning(): Application = copy(warningCount = maxOf(0, warningCount - 1))
+
+    fun updateLastAssignedAt(lastAssignedAt: Instant): Application = copy(lastAssignedAt = lastAssignedAt)
 
     companion object {
         private const val MIN_NAME_LENGTH = 2
