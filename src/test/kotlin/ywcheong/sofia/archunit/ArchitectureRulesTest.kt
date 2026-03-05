@@ -235,6 +235,187 @@ class ArchitectureRulesTest {
             .because("헥사고날 아키텍처 의존성 규칙: 인바운드 어댑터(Controller)는 아웃바운드 포트(Port)를 직접 의존하지 말고 반드시 유스케이스(UseCase)를 통해야 함")
             .allowEmptyShould(true)
 
+    // ==================== 패키지 구조 검사 ====================
+
+    @ArchTest
+    val controllersShouldResideInHttpPackage: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.inbound..")
+            .and()
+            .areAnnotatedWith(RestController::class.java)
+            .or()
+            .areAnnotatedWith(Controller::class.java)
+            .should()
+            .resideInAPackage("..http..")
+            .because("인바운드 어댑터 패키지 구조: Controller는 adapter/inbound/{feature}/http/ 패키지 내에 위치해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val inboundHttpDtosShouldFollowNamingConventions: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.inbound..")
+            .and()
+            .resideInAPackage("..http.dto..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .should(haveSimpleNameEndingWithAny("Request", "Response"))
+            .because("인바운드 DTO 명명 규칙: HTTP 요청/응답 DTO는 'Request' 또는 'Response' 접미사를 사용해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val applicationPortDtosShouldFollowNamingConventions: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.application.port..")
+            .and()
+            .resideInAPackage("..dto..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .should(haveSimpleNameEndingWithAny("Command", "Result"))
+            .because("애플리케이션 포트 DTO 명명 규칙: Command(입력)와 Result(출력) 접미사를 사용해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val nonJpaOutboundAdaptersShouldBeNamedAdapter: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.outbound..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .and()
+            .resideOutsideOfPackage("..jpa..")
+            .and()
+            .resideOutsideOfPackage("..common..")
+            .should()
+            .haveSimpleNameEndingWith("Adapter")
+            .because("아웃바운드 어댑터 명명 규칙: JPA 외 어댑터(email, kakao 등)는 'Adapter' 접미사를 사용해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val domainExceptionsShouldBeNamedException: ArchRule =
+        classes()
+            .that()
+            .resideInAnyPackage("ywcheong.sofia.domain..exceptions..", "ywcheong.sofia.domain..exception..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .should()
+            .haveSimpleNameEndingWith("Exception")
+            .because("도메인 예외 명명 규칙: 예외 클래스는 'Exception' 접미사를 사용해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val domainExceptionsShouldExtendBusinessException: ArchRule =
+        classes()
+            .that()
+            .resideInAnyPackage("ywcheong.sofia.domain..exceptions..", "ywcheong.sofia.domain..exception..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .and()
+            .doNotHaveSimpleName("BusinessException")
+            .should(extendBusinessException())
+            .because("도메인 예외 상속 규칙: 모든 비즈니스 예외는 BusinessException을 상속해야 함 (4xx 응답 매핑)")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val domainEntitiesShouldResideInEntityPackage: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.domain..")
+            .and()
+            .haveSimpleNameNotStartingWith("Exception")
+            .and()
+            .resideOutsideOfPackage("..value..")
+            .and()
+            .resideOutsideOfPackage("..enum..")
+            .and()
+            .resideOutsideOfPackage("..enums..")
+            .and()
+            .resideOutsideOfPackage("..exceptions..")
+            .and()
+            .resideOutsideOfPackage("..exception..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .and()
+            .doNotHaveSimpleName("BusinessException")
+            .should()
+            .resideInAPackage("..entity..")
+            .because("도메인 패키지 구조: 도메인 엔티티는 domain/{feature}/entity/ 패키지에 위치해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val domainValueObjectsShouldResideInValuePackage: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.domain..value..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .should()
+            .resideInAPackage("..value..")
+            .because("도메인 패키지 구조: 값 객체는 domain/{feature}/value/ 패키지에 위치해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val adapterCommonClassesShouldFollowNamingConventions: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.adapter.common..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .should(haveSimpleNameEndingWithAny("Config", "Handler", "Converter", "Entity", "Exception"))
+            .because("공통 어댑터 명명 규칙: Config, Handler, Converter, Entity, Exception 접미사를 사용해야 함")
+            .allowEmptyShould(true)
+
+    @ArchTest
+    val applicationCommonClassesShouldFollowNamingConventions: ArchRule =
+        classes()
+            .that()
+            .resideInAPackage("ywcheong.sofia.application.common..")
+            .and()
+            .areNotInterfaces()
+            .and()
+            .areTopLevelClasses()
+            .should(haveSimpleNameEndingWithAny("Config", "Service", "Handler"))
+            .because("공통 애플리케이션 명명 규칙: Config, Service, Handler 접미사를 사용해야 함")
+            .allowEmptyShould(true)
+
+    // ==================== 커스텀 조건 ====================
+
+    private fun extendBusinessException(): ArchCondition<JavaClass> =
+        object : ArchCondition<JavaClass>("extend BusinessException") {
+            override fun check(
+                item: JavaClass,
+                events: ConditionEvents,
+            ) {
+                val extendsBusinessException =
+                    item.allRawSuperclasses.any { it.name == "ywcheong.sofia.domain.common.exceptions.BusinessException" }
+                events.add(
+                    SimpleConditionEvent(
+                        item,
+                        extendsBusinessException,
+                        "${item.name} should extend BusinessException",
+                    ),
+                )
+            }
+        }
+
     private fun haveSimpleNameEndingWithAny(vararg suffixes: String): ArchCondition<JavaClass> =
         object : ArchCondition<JavaClass>(
             "have simple name ending with one of ${suffixes.joinToString()}",
