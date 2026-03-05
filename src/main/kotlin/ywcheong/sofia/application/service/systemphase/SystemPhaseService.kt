@@ -10,6 +10,7 @@ import ywcheong.sofia.application.port.outbound.systemphase.LoadSystemPhasePort
 import ywcheong.sofia.application.port.outbound.systemphase.SaveSystemPhasePort
 import ywcheong.sofia.domain.systemphase.entity.SystemPhase
 import ywcheong.sofia.domain.systemphase.enums.SystemPhaseType
+import ywcheong.sofia.domain.systemphase.exception.InvalidPhaseTransitionException
 import java.time.Instant
 
 @Service
@@ -29,12 +30,21 @@ class SystemPhaseService(
 
     @Transactional
     override fun changeSystemPhase(command: ChangeSystemPhaseCommand): SystemPhaseResult {
-        val systemPhase =
+        val currentPhase = loadSystemPhasePort.load() ?: createDefault()
+
+        if (!currentPhase.canTransitionTo(command.systemPhaseType)) {
+            throw InvalidPhaseTransitionException(
+                currentPhase.systemPhaseType.name,
+                command.systemPhaseType.name,
+            )
+        }
+
+        val newPhase =
             SystemPhase(
                 systemPhaseType = command.systemPhaseType,
                 startDate = command.startDate,
             )
-        val saved = saveSystemPhasePort.save(systemPhase)
+        val saved = saveSystemPhasePort.save(newPhase)
         return SystemPhaseResult(
             systemPhaseType = saved.systemPhaseType,
             startDate = saved.startDate,
