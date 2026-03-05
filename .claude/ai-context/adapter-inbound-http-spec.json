@@ -1,0 +1,16 @@
+[
+  {
+    "endpoint": "GET /admin/api/system-phase",
+    "request": null,
+    "response": "SystemPhaseResponse",
+    "useCase": "GetSystemPhaseUseCase",
+    "entities": ["SystemPhase"]
+  },
+  {
+    "endpoint": "PUT /admin/api/system-phase",
+    "request": "ChangeSystemPhaseRequest",
+    "response": "SystemPhaseResponse",
+    "useCase": "GetSystemPhaseUseCase",
+    "entities": ["SystemPhase"]
+  }
+]

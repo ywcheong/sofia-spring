@@ -1,0 +1,18 @@
+{
+ "_memo": "feature 단위가 key, enums/entity/value가 value",
+ "systemphase": {
+  "enums": {
+   "SystemPhaseType": {
+    "_memo": "시스템 페이즈 종류",
+    "names": ["INACTIVE", "RECRUIT", "TRANSLATE", "SETTLE"]
+   }
+  },
+  "entity": {
+   "SystemPhase": {
+    "_memo": "시스템 페이즈 저장 엔티티. 싱글톤",
+    "systemPhaseType": "현재 페이즈 상태: SystemPhaseType",
+    "startDate": "현재 페이즈가 시작된 날짜: Instant"
+   }
+  }
+ }
+}
