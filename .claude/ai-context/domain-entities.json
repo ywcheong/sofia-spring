@@ -14,5 +14,31 @@
     "startDate": "현재 페이즈가 시작된 날짜: Instant"
    }
   }
+ },
+ "application": {
+  "enums": {
+   "ApplicationStatus": {
+    "_memo": "참가 신청 상태",
+    "names": ["PENDING", "APPROVED", "REJECTED"]
+   }
+  },
+  "entity": {
+   "Application": {
+    "_memo": "참가 신청 엔티티. 번역버디의 봉사활동 참가 신청 정보",
+    "studentNumber": "학번: StudentNumber (값 객체)",
+    "name": "이름: String (2~4글자)",
+    "status": "신청 상태: ApplicationStatus (기본값: PENDING)",
+    "appliedAt": "신청 일시: Instant",
+    "rejectionReason": "거절 사유: String? (null 허용)",
+    "processedAt": "처리 일시: Instant? (null 허용)"
+   }
+  },
+  "value": {
+   "StudentNumber": {
+    "_memo": "학번 값 객체. XX-XXX 형식 (두 자리 숫자-세 자리 숫자)",
+    "value": "학번 값: String",
+    "validate": "형식 검증 메서드 (정규식: ^\\d{2}-\\d{3}$)"
+   }
+  }
  }
 }

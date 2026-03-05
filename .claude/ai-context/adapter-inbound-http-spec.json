@@ -1,5 +1,8 @@
 [
   {
+    "_memo": "GlobalExceptionHandler는 adapter.inbound.common.http.handler 패키지에 위치 (adapter.common은 domain 의존 불가)"
+  },
+  {
     "endpoint": "GET /admin/api/system-phase",
     "request": null,
     "response": "SystemPhaseResponse",
@@ -10,7 +13,15 @@
     "endpoint": "PUT /admin/api/system-phase",
     "request": "ChangeSystemPhaseRequest",
     "response": "SystemPhaseResponse",
-    "useCase": "GetSystemPhaseUseCase",
+    "useCase": "ChangeSystemPhaseUseCase",
     "entities": ["SystemPhase"]
+  },
+  {
+    "endpoint": "POST /kakao/api/applications",
+    "request": "ApplyParticipationRequest",
+    "response": "ApplicationResponse",
+    "useCase": "ApplyParticipationUseCase",
+    "entities": ["Application", "StudentNumber"],
+    "_memo": "번역버디 참가 신청. RECRUIT 또는 TRANSLATE 페이즈에서만 가능"
   }
 ]

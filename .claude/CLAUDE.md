@@ -20,12 +20,13 @@ domain은 외부 의존성 없이 구현 (jpa 등 미사용)
 	- service/{feature}/*Service
 - domain/
   - common,{feature}/
-    - entity/, value/, enum/
+    - entity/, value/, enum/, exceptions/
 
 ### 지식 저장소
-`.claude/ai-context/{}.md`에 구체적인 지식이 있음
+`.claude/ai-context/{}.md`에 구체적인 지식이 있음.
+지식에 영향을 끼치는 행동을 한다면, 지식도 업데이트해야 함.
 
-- business-summary.md: 비즈니스 기초 및 심화지식 가이드
+- business-summary.md: 비즈니스 기초지식 가이드 및 유스케이스 명세
 - domain-entities.json:	현재 구현된 도메인 엔티티 카탈로그 (주의: JPA @Entity 아님)
 - adapter-inbound-http-spec.json: 현재 구현된 Adapter Inbound, HTTP API 스펙
 - adapter-outbound-jpa-spec.json: 현재 구현된 Adapter Outbound, JPA 스펙

@@ -1,4 +1,4 @@
-package ywcheong.sofia.adapter.common.http.handler
+package ywcheong.sofia.adapter.inbound.common.http.handler
 
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
@@ -7,6 +7,8 @@ import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import ywcheong.sofia.domain.application.exception.DuplicateStudentNumberException
+import ywcheong.sofia.domain.application.exception.InvalidPhaseException
 import ywcheong.sofia.domain.exception.SofiaException
 import java.net.URI
 import java.time.Clock
@@ -25,9 +27,10 @@ class GlobalExceptionHandler(
     ): ProblemDetail {
         log.error("Sofia exception occurred: ${exception.message}", exception)
 
+        val status = determineHttpStatus(exception)
         val problemDetail =
             ProblemDetail
-                .forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.message ?: "Bad Request")
+                .forStatusAndDetail(status, exception.message ?: "Bad Request")
         problemDetail.type = URI.create("https://sofia/errors/sofia-exception") // TODO 변경 필요
         problemDetail.title = "Sofia Business Error"
         problemDetail.instance = URI.create(request.requestURI)
@@ -35,6 +38,13 @@ class GlobalExceptionHandler(
 
         return problemDetail
     }
+
+    private fun determineHttpStatus(exception: SofiaException): HttpStatus =
+        when (exception) {
+            is DuplicateStudentNumberException -> HttpStatus.CONFLICT
+            is InvalidPhaseException -> HttpStatus.FORBIDDEN
+            else -> HttpStatus.BAD_REQUEST
+        }
 
     @ExceptionHandler(Exception::class)
     fun handleException(

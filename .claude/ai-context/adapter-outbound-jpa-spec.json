@@ -1,10 +1,20 @@
 {
   "_memo": "feature 단위가 key, jpaEntity/table/repository/adapter/ports가 value",
+  "_pk_convention": "JPA 엔티티는 UUID 타입의 @Id를 사용하며 @GeneratedValue 사용 금지. 예외 시 @BypassPrimaryKeyConvention 사용",
   "systemphase": {
     "jpaEntity": "SystemPhaseJpaEntity",
     "table": "system_phase",
     "repository": "SystemPhaseJpaRepository",
     "adapter": "SystemPhaseJpaAdapter",
-    "ports": ["LoadSystemPhasePort", "SaveSystemPhasePort"]
+    "ports": ["LoadSystemPhasePort", "SaveSystemPhasePort"],
+    "_pk_bypass_reason": "싱글톤 엔티티: 시스템당 단일 레코드만 존재하며 고정된 PK 사용"
+  },
+  "application": {
+    "jpaEntity": "ApplicationJpaEntity",
+    "table": "applications",
+    "repository": "ApplicationJpaRepository",
+    "adapter": "ApplicationJpaAdapter",
+    "ports": ["LoadApplicationPort", "SaveApplicationPort"],
+    "_pk_type": "UUID (UuidGenerateService 사용)"
   }
 }
