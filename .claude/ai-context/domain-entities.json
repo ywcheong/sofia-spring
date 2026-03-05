@@ -1,5 +1,6 @@
 {
  "_memo": "feature 단위가 key, enums/entity/value가 value",
+ "_pk_convention": "PK는 UUID 타입 사용, UuidGenerateService를 통해 애플리케이션에서 생성. 예외 시 @BypassPrimaryKeyConvention 사용",
  "systemphase": {
   "enums": {
    "SystemPhaseType": {

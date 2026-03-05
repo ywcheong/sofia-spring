@@ -1,6 +1,6 @@
 {
   "_memo": "feature 단위가 key, jpaEntity/table/repository/adapter/ports가 value",
-  "_pk_convention": "JPA 엔티티는 UUID 타입의 @Id를 사용하며 @GeneratedValue 사용 금지. 예외 시 @BypassPrimaryKeyConvention 사용",
+  "_pk_convention": "JPA 엔티티는 UUID 타입의 @Id를 사용하며 @GeneratedValue 사용 금지. PK는 UuidGenerateService를 통해 애플리케이션에서 생성. 예외 시 @BypassPrimaryKeyConvention 사용",
   "systemphase": {
     "jpaEntity": "SystemPhaseJpaEntity",
     "table": "system_phase",
