@@ -6,4 +6,6 @@ import java.time.Instant
 data class SystemPhase(
     val systemPhaseType: SystemPhaseType,
     val startDate: Instant,
-)
+) {
+    fun canTransitionTo(target: SystemPhaseType): Boolean = systemPhaseType.next == target
+}

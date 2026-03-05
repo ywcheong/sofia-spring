@@ -5,4 +5,14 @@ enum class SystemPhaseType {
     RECRUIT,
     TRANSLATE,
     SETTLE,
+    ;
+
+    val next: SystemPhaseType
+        get() =
+            when (this) {
+                INACTIVE -> RECRUIT
+                RECRUIT -> TRANSLATE
+                TRANSLATE -> SETTLE
+                SETTLE -> INACTIVE
+            }
 }

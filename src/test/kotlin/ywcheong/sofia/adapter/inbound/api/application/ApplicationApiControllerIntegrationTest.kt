@@ -66,7 +66,14 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     @Test
     @DisplayName("참가 신청 - TRANSLATE 페이즈에서도 신청 가능하다")
     fun `POST applications allowed in TRANSLATE phase`() {
-        // given: TRANSLATE 페이즈로 설정
+        // given: INACTIVE -> RECRUIT -> TRANSLATE 페이즈로 설정
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"RECRUIT"}"""),
+            ).andExpect(status().isOk)
+
         mockMvc
             .perform(
                 put("/admin/api/system-phase")
@@ -197,13 +204,7 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     @Test
     @DisplayName("참가 신청 - INACTIVE 페이즈에서는 신청 불가하다")
     fun `POST applications rejects in INACTIVE phase`() {
-        // given: INACTIVE 페이즈로 설정
-        mockMvc
-            .perform(
-                put("/admin/api/system-phase")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"systemPhaseType":"INACTIVE"}"""),
-            ).andExpect(status().isOk)
+        // given: INACTIVE 페이즈 (기본값)
 
         // when & then: 신청 시도
         mockMvc
@@ -219,7 +220,21 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     @Test
     @DisplayName("참가 신청 - SETTLE 페이즈에서는 신청 불가하다")
     fun `POST applications rejects in SETTLE phase`() {
-        // given: SETTLE 페이즈로 설정
+        // given: INACTIVE -> RECRUIT -> TRANSLATE -> SETTLE 페이즈로 설정
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"RECRUIT"}"""),
+            ).andExpect(status().isOk)
+
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"TRANSLATE"}"""),
+            ).andExpect(status().isOk)
+
         mockMvc
             .perform(
                 put("/admin/api/system-phase")
@@ -458,7 +473,7 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     @Test
     @DisplayName("신청 승인 - INACTIVE 페이즈에서는 승인 불가하다")
     fun `POST approve rejects in INACTIVE phase`() {
-        // given: INACTIVE 페이즈로 설정하고 신청 생성 후 페이즈 변경
+        // given: RECRUIT 페이즈에서 신청 생성 후 INACTIVE 페이즈로 변경
         mockMvc
             .perform(
                 put("/admin/api/system-phase")
@@ -471,6 +486,21 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
                 post("/kakao/api/applications")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"studentNumber":"25-105","name":"홍길동"}"""),
+            ).andExpect(status().isOk)
+
+        // RECRUIT -> TRANSLATE -> SETTLE -> INACTIVE
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"TRANSLATE"}"""),
+            ).andExpect(status().isOk)
+
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"SETTLE"}"""),
             ).andExpect(status().isOk)
 
         mockMvc
@@ -491,7 +521,14 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
     @Test
     @DisplayName("신청 승인 - TRANSLATE 페이즈에서도 승인 가능하다")
     fun `POST approve allowed in TRANSLATE phase`() {
-        // given: TRANSLATE 페이즈로 설정
+        // given: INACTIVE -> RECRUIT -> TRANSLATE 페이즈로 설정
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"RECRUIT"}"""),
+            ).andExpect(status().isOk)
+
         mockMvc
             .perform(
                 put("/admin/api/system-phase")
