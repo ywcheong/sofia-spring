@@ -6,7 +6,7 @@ import ywcheong.sofia.application.port.outbound.systemphase.SaveSystemPhasePort
 import ywcheong.sofia.domain.systemphase.entity.SystemPhase
 
 @Repository
-class SystemPhasePersistenceAdapter(
+class SystemPhaseJpaAdapter(
     private val systemPhaseJpaRepository: SystemPhaseJpaRepository,
 ) : LoadSystemPhasePort,
     SaveSystemPhasePort {

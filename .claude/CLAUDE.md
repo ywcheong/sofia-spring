@@ -26,9 +26,9 @@ domain은 외부 의존성 없이 구현 (jpa 등 미사용)
 `.claude/ai-context/{}.md`에 구체적인 지식이 있음
 
 - business-summary.md: 비즈니스 기초 및 심화지식 가이드
-- domain-entities.json:	도메인 엔티티 카탈로그 (주의: JPA @Entity 아님)
-- adapter-inbound-http-spec.json: Adapter Inbound, HTTP API 스펙
-- adapter-outbound-jpa-spec.json: Adapter Outbound, JPA 스펙
+- domain-entities.json:	현재 구현된 도메인 엔티티 카탈로그 (주의: JPA @Entity 아님)
+- adapter-inbound-http-spec.json: 현재 구현된 Adapter Inbound, HTTP API 스펙
+- adapter-outbound-jpa-spec.json: 현재 구현된 Adapter Outbound, JPA 스펙
 
 `.claude/skills/{SKILLNAME}/SKILL.md`에 스킬이 있음
 - develop: 개발 과정에서 필요한 스킬
