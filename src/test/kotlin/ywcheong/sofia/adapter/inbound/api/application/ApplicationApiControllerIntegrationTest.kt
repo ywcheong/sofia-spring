@@ -514,4 +514,89 @@ class ApplicationApiControllerIntegrationTest : IntegrationTestSupport() {
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.status").value("APPROVED"))
     }
+
+    // ==================== 재신청 테스트 ====================
+
+    @Test
+    @DisplayName("참가 신청 - 거절된 이후에도 다시 신청할 수 있다")
+    fun `POST applications allows reapplication after rejection`() {
+        // given: RECRUIT 페이즈로 설정하고 신청 생성 후 거절
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"RECRUIT"}"""),
+            ).andExpect(status().isOk)
+
+        // 첫 번째 신청
+        mockMvc
+            .perform(
+                post("/kakao/api/applications")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"studentNumber":"25-200","name":"홍길동"}"""),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.status").value("PENDING"))
+
+        // 거절 처리
+        mockMvc
+            .perform(
+                post("/admin/api/applications/25-200/reject")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"rejectionReason":"정원 초과"}"""),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.status").value("REJECTED"))
+
+        // when: 같은 학번으로 다시 신청
+        mockMvc
+            .perform(
+                post("/kakao/api/applications")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"studentNumber":"25-200","name":"홍길동"}"""),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.studentNumber").value("25-200"))
+            .andExpect(jsonPath("$.name").value("홍길동"))
+            .andExpect(jsonPath("$.status").value("PENDING"))
+
+        // then: 기존 신청이 PENDING으로 변경되었는지 확인
+        val entity = applicationJpaRepository.findByStudentNumber("25-200")!!
+        assertThat(entity.status.name).isEqualTo("PENDING")
+        assertThat(entity.rejectionReason).isNull()
+    }
+
+    @Test
+    @DisplayName("참가 신청 - 승인된 학번으로는 다시 신청할 수 없다")
+    fun `POST applications rejects reapplication after approval`() {
+        // given: RECRUIT 페이즈로 설정하고 신청 생성 후 승인
+        mockMvc
+            .perform(
+                put("/admin/api/system-phase")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"systemPhaseType":"RECRUIT"}"""),
+            ).andExpect(status().isOk)
+
+        mockMvc
+            .perform(
+                post("/kakao/api/applications")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"studentNumber":"25-201","name":"김철수"}"""),
+            ).andExpect(status().isOk)
+
+        mockMvc
+            .perform(
+                post("/admin/api/applications/25-201/approve")
+                    .contentType(MediaType.APPLICATION_JSON),
+            ).andExpect(status().isOk)
+
+        // when: 같은 학번으로 다시 신청 시도
+        mockMvc
+            .perform(
+                post("/kakao/api/applications")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"studentNumber":"25-201","name":"김철수"}"""),
+            ).andExpect(status().isConflict)
+
+        // then: 여전히 APPROVED 상태 유지
+        val entity = applicationJpaRepository.findByStudentNumber("25-201")!!
+        assertThat(entity.status.name).isEqualTo("APPROVED")
+    }
 }

@@ -14,6 +14,7 @@ import ywcheong.sofia.application.port.outbound.application.SaveApplicationPort
 import ywcheong.sofia.application.port.outbound.email.SendEmailPort
 import ywcheong.sofia.application.port.outbound.systemphase.LoadSystemPhasePort
 import ywcheong.sofia.domain.application.entity.Application
+import ywcheong.sofia.domain.application.enums.ApplicationStatus
 import ywcheong.sofia.domain.application.exception.AlreadyProcessedException
 import ywcheong.sofia.domain.application.exception.ApplicationNotFoundException
 import ywcheong.sofia.domain.application.exception.DuplicateStudentNumberException
@@ -45,8 +46,9 @@ class ApplicationService(
         // 2. 학번 값 객체 생성 및 검증
         val studentNumber = StudentNumber(command.studentNumber)
 
-        // 3. 학번 중복 확인
-        if (loadApplicationPort.existsByStudentNumber(studentNumber)) {
+        // 3. 학번 중복 확인 (PENDING 또는 APPROVED 상태만 중복으로 간주)
+        val duplicateStatuses = listOf(ApplicationStatus.PENDING, ApplicationStatus.APPROVED)
+        if (loadApplicationPort.existsByStudentNumberAndStatusIn(studentNumber, duplicateStatuses)) {
             throw DuplicateStudentNumberException("이미 등록된 학번입니다: ${studentNumber.value}")
         }
 

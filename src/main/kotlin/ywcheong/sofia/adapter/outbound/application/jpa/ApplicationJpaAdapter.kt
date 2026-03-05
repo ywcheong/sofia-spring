@@ -5,6 +5,7 @@ import ywcheong.sofia.application.common.service.UuidGenerateService
 import ywcheong.sofia.application.port.outbound.application.LoadApplicationPort
 import ywcheong.sofia.application.port.outbound.application.SaveApplicationPort
 import ywcheong.sofia.domain.application.entity.Application
+import ywcheong.sofia.domain.application.enums.ApplicationStatus
 import ywcheong.sofia.domain.application.value.StudentNumber
 
 @Repository
@@ -15,6 +16,11 @@ class ApplicationJpaAdapter(
     SaveApplicationPort {
     override fun existsByStudentNumber(studentNumber: StudentNumber): Boolean =
         applicationJpaRepository.existsByStudentNumber(studentNumber.value)
+
+    override fun existsByStudentNumberAndStatusIn(
+        studentNumber: StudentNumber,
+        statuses: List<ApplicationStatus>,
+    ): Boolean = applicationJpaRepository.existsByStudentNumberAndStatusIn(studentNumber.value, statuses)
 
     override fun findByStudentNumber(studentNumber: StudentNumber): Application? =
         applicationJpaRepository.findByStudentNumber(studentNumber.value)?.toDomain()
